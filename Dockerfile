@@ -1,19 +1,21 @@
 # ----- Stage 1 -----------
-FROM maven:3.8.3-openjdk-17 as builder
+
+FROM maven:3.9-eclipse-temurin-21 AS builder
 
 WORKDIR /src
 
-COPY . /src
+COPY . .
 
-RUN mvn clean install -DskipTests=true
+RUN mvn clean package -DskipTests
+
 
 # ----- Stage 2 -----------
 
-FROM openjdk:17-alpine
+FROM eclipse-temurin:21-jre-alpine
 
 COPY --from=builder /src/target/*.jar /src/target/bankapp.jar
 
 EXPOSE 8080
 
-CMD ["java","-jar","/src/target/bankapp.jar"]
+ENTRYPOINT ["java", "-jar", "/src/target/bankapp.jar"]
 
